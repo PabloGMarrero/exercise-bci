@@ -28,7 +28,7 @@ when finish it, you can verify running `gradle --version`
 
 ### Swagger
 
-[Here](localhost:8080/api/swagger-ui.html) you can explore API
+[Here](http://localhost:8080/api/swagger-ui.html) you can explore API
 
 ### Diagrams
 

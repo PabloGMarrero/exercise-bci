@@ -1,10 +1,10 @@
-package com.bci.bci.signup.infrastructure.adapters.out;
+package com.bci.bci.user.infrastructure.adapters.out;
 
-import com.bci.bci.signup.domain.models.Phone;
-import com.bci.bci.signup.domain.models.User;
-import com.bci.bci.signup.domain.ports.out.CreateUserProvider;
-import com.bci.bci.signup.infrastructure.adapters.in.rest.request.CreateUserRequest;
-import com.bci.bci.signup.infrastructure.adapters.out.db.UserRepository;
+import com.bci.bci.user.domain.models.Phone;
+import com.bci.bci.user.domain.models.User;
+import com.bci.bci.user.domain.ports.out.CreateUserProvider;
+import com.bci.bci.user.infrastructure.adapters.in.rest.request.CreateUserRequest;
+import com.bci.bci.user.infrastructure.adapters.out.db.UserRepository;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -37,7 +37,6 @@ public class H2CreateUser implements CreateUserProvider {
                 .phones(phones)
                 .build();
 
-        var entitySaved = userRepository.save(entity);
-        return entitySaved;
+        return userRepository.save(entity);
     }
 }

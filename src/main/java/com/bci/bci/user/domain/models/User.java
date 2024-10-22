@@ -1,4 +1,4 @@
-package com.bci.bci.signup.domain.models;
+package com.bci.bci.user.domain.models;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

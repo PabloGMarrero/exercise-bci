@@ -1,4 +1,4 @@
-package com.bci.bci.signup.infrastructure.adapters.in.rest.response;
+package com.bci.bci.user.infrastructure.adapters.in.rest.response;
 
 import lombok.Builder;
 import lombok.Getter;
