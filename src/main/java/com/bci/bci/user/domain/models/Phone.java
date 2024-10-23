@@ -41,7 +41,7 @@ public class Phone {
     private Long version;
 
     @Column(name = "number")
-    private String number;
+    private Long number;
 
     @Column(name = "city_code")
     private Integer cityCode;

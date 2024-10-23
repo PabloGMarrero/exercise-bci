@@ -15,10 +15,9 @@ public class JWTUtil {
     private static final Long ACCESS_TOKEN_TTL= 10000L;
     private static final String ACCESS_TOKEN = "xhmeMUN9y64uStBGFjvQgnJDLV5cTsaXKYEpwAkH";
 
-    public static String generateToken(String name, String email){
+    public static String generateToken(String email){
         var expirationTime = ACCESS_TOKEN_TTL * 1000;
         var claims = new HashMap<String, String>();
-        claims.put("name", name);
         claims.put("email", email);
 
         return Jwts.builder()
@@ -34,12 +33,12 @@ public class JWTUtil {
             var claims = Jwts.parser()
                     .setSigningKey(ACCESS_TOKEN.getBytes(StandardCharsets.UTF_8))
                     .build()
-                    .parseEncryptedClaims(token)
-                    .getPayload();
+                    .parseClaimsJws(token)
+                    .getBody();
 
             return new UsernamePasswordAuthenticationToken(claims.getSubject(), null, Collections.emptyList());
         }catch (JwtException ex){
-            throw null;
+            throw new SecurityException("Token is not valid.");
         }
     }
 }

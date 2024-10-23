@@ -1,5 +1,6 @@
 package com.bci.bci.user.domain.usecases;
 
+import com.bci.bci.config.security.JWTUtil;
 import com.bci.bci.user.domain.exceptions.CreateUserException;
 import com.bci.bci.user.domain.ports.in.CreateUserPort;
 import com.bci.bci.user.domain.ports.out.CreateUserProvider;
@@ -32,7 +33,7 @@ public class CreateUserUseCase implements CreateUserPort {
                 .id(user.getId())
                 .created(user.getCreated())
                 .lastLogin(user.getLastLogin())
-                .token("")
+                .token(JWTUtil.generateToken(request.getEmail()))
                 .isActive(user.getIsActive())
                 .build();
     }

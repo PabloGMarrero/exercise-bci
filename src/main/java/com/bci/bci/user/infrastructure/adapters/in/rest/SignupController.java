@@ -5,6 +5,7 @@ import com.bci.bci.user.domain.exceptions.CreateUserException;
 import com.bci.bci.user.domain.ports.in.CreateUserPort;
 import com.bci.bci.user.domain.ports.in.LoginUserPort;
 import com.bci.bci.user.infrastructure.adapters.in.rest.request.CreateUserRequest;
+import com.bci.bci.user.infrastructure.adapters.in.rest.request.LoginUserRequest;
 import com.bci.bci.user.infrastructure.adapters.in.rest.response.UserCreatedResponse;
 import com.bci.bci.user.infrastructure.adapters.in.rest.response.UserLoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,13 +20,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(path = "/user")
 @Validated
 @Tag(name = "Sign-up Controller", description = "User administration services")
 public class SignupController {
@@ -56,9 +55,10 @@ public class SignupController {
             @ApiResponse(responseCode = "200", description = "Login successful.", content = {@Content(schema = @Schema(implementation = UserLoginResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = ErrorMessageResponse.class)))})
     public ResponseEntity<UserLoginResponse> loginUser(
-            @Parameter(description = "JWT token User", required = true) @RequestHeader("token") String token) {
+            @Parameter(description = "JWT token User", required = true) @RequestHeader("token") String token,
+            @Parameter(description = "Login user request", required = true) @Valid @RequestBody LoginUserRequest request) {
 
-        var response = loginUserPort.login(token);
+        var response = loginUserPort.login(request, token);
         return ResponseEntity.ok(response);
     }
 }

@@ -55,6 +55,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(message, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(Exception.class)
+    protected ResponseEntity<Object> handleException(Exception ex)
+    {
+        var message = Collections.singletonList(ErrorResponse.builder()
+                .code(404)
+                .detail(ex.getMessage())
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
+                .build());
+        return buildResponseEntity(message, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+
     private ResponseEntity<Object> buildResponseEntity(List<ErrorResponse> errorResponses, HttpStatus status) {
         return new ResponseEntity<>(ErrorMessageResponse.builder().error(errorResponses).build(), status);
     }
