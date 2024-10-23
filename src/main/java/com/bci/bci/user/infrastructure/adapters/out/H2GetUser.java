@@ -18,6 +18,6 @@ public class H2GetUser implements GetUserProvider {
 
     @Override
     public Optional<User> getByEmail(String email) {
-        return Optional.ofNullable(userRepository.findByEmail(email));
+        return Optional.ofNullable(userRepository.findOneByEmail(email));
     }
 }

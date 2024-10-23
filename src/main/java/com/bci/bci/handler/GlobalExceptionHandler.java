@@ -5,6 +5,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,10 +38,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(CreateUserException.class)
     protected ResponseEntity<Object> handleCreateUserException(CreateUserException ex) {
         var message = Collections.singletonList(ErrorResponse.builder()
-                        .code(400)
-                        .detail(ex.getMessage())
-                        .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
-                        .build());
+                .code(400)
+                .detail(ex.getMessage())
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
+                .build());
+        return buildResponseEntity(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    protected ResponseEntity<Object> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        var message = Collections.singletonList(ErrorResponse.builder()
+                .code(400)
+                .detail(ex.getMessage())
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
+                .build());
         return buildResponseEntity(message, HttpStatus.BAD_REQUEST);
     }
 
