@@ -5,6 +5,6 @@ import com.bci.bci.user.domain.models.User;
 public interface AuthenticationProvider {
     String generateToken(User user);
 
-    void validateUser(String email, String password);
+    String validateUser(String token);
 
 }

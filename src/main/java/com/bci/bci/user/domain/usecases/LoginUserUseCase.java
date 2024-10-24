@@ -29,9 +29,9 @@ public class LoginUserUseCase implements LoginUserPort {
     @Override
     public UserLoginResponse login(LoginUserRequest request, String token) {
 
+        var extractedEmail = authenticationProvider.validateUser(token);
         var user = getUserProvider.getByEmail(request.getEmail());//.orElseThrow(()-> new SecurityException("There was a error trying to get user."));
 
-        authenticationProvider.validateUser(request.getEmail(), request.getPassword());
 
         var updateUser = User.builder()
                 .id(user.getId())
