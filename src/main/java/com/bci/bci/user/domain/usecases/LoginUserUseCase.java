@@ -1,9 +1,8 @@
 package com.bci.bci.user.domain.usecases;
 
-import com.bci.bci.config.security.JWTUtil;
-import com.bci.bci.user.domain.models.Phone;
 import com.bci.bci.user.domain.models.User;
 import com.bci.bci.user.domain.ports.in.LoginUserPort;
+import com.bci.bci.user.domain.ports.out.AuthenticationProvider;
 import com.bci.bci.user.domain.ports.out.GetUserProvider;
 import com.bci.bci.user.domain.ports.out.UpdateUserProvider;
 import com.bci.bci.user.infrastructure.adapters.in.rest.request.LoginUserRequest;
@@ -12,7 +11,6 @@ import com.bci.bci.user.infrastructure.adapters.in.rest.response.UserPhoneRespon
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,18 +18,21 @@ public class LoginUserUseCase implements LoginUserPort {
 
     private final GetUserProvider getUserProvider;
     private final UpdateUserProvider updateUserProvider;
+    private final AuthenticationProvider authenticationProvider;
 
-    public LoginUserUseCase(GetUserProvider getUserProvider, UpdateUserProvider updateUserProvider) {
+    public LoginUserUseCase(GetUserProvider getUserProvider, UpdateUserProvider updateUserProvider, AuthenticationProvider authenticationProvider) {
         this.getUserProvider = getUserProvider;
         this.updateUserProvider = updateUserProvider;
+        this.authenticationProvider = authenticationProvider;
     }
 
     @Override
     public UserLoginResponse login(LoginUserRequest request, String token) {
 
-        JWTUtil.generateToken(request.getEmail());
+        var user = getUserProvider.getByEmail(request.getEmail());//.orElseThrow(()-> new SecurityException("There was a error trying to get user."));
 
-        var user = getUserProvider.getByEmail(request.getEmail()).orElseThrow(()-> new SecurityException("There was a error trying to get user."));
+        authenticationProvider.validateUser(request.getEmail(), request.getPassword());
+
         var updateUser = User.builder()
                 .id(user.getId())
                 .created(user.getCreated())
@@ -43,6 +44,7 @@ public class LoginUserUseCase implements LoginUserPort {
                 .lastLogin(LocalDateTime.now())
                 //.version()
                 .build();
+
         updateUserProvider.update(updateUser);
 
         return UserLoginResponse.builder()
