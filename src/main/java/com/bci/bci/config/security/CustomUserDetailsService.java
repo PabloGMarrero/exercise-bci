@@ -4,22 +4,23 @@ import com.bci.bci.user.domain.ports.out.GetUserProvider;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class UserDetailsServiceImpl implements UserDetailsService {
-
+@Component
+public class CustomUserDetailsService implements UserDetailsService {
     private final GetUserProvider getUserProvider;
 
-    public UserDetailsServiceImpl(GetUserProvider getUserProvider) {
+    public CustomUserDetailsService(GetUserProvider getUserProvider) {
         this.getUserProvider = getUserProvider;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        var user = getUserProvider.getByEmail(email)
-                .orElseThrow(()->new UsernameNotFoundException("The user does not exist."));
-
-        return new UserDetailsWrapper(user);
+        var user = getUserProvider.getByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return UserWrapper.builder().user(user).build();
     }
+
 }

@@ -1,46 +1,53 @@
 package com.bci.bci.config.security;
 
-import com.bci.bci.user.infrastructure.adapters.in.rest.request.CreateUserRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
 
-public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+@Component
+public class JWTAuthenticationFilter extends OncePerRequestFilter {
+
+    private final CustomUserDetailsService userDetailsService;
+    private final JWTUtil jwtUtil;
+
+    public JWTAuthenticationFilter(CustomUserDetailsService userDetailsService, JWTUtil jwtUtil) {
+        this.userDetailsService = userDetailsService;
+        this.jwtUtil = jwtUtil;
+    }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        var credentials = new CreateUserRequest();
-        try {
-            credentials = new ObjectMapper().readValue(request.getReader(), CreateUserRequest.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);//TODO ver mejora exception
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        final String authHeader = request.getHeader("Authorization");
+        final String jwt;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
         }
+        jwt = authHeader.substring(7);
+        String username = jwtUtil.extractEmail(jwt);
+        if (username != null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                credentials.getEmail(),
-                credentials.getPassword(),
-                Collections.emptyList()
-        );
-        return getAuthenticationManager().authenticate(usernamePasswordAuthenticationToken);
+            if (jwtUtil.isTokenValid(jwt, userDetails)) {
+                var context = SecurityContextHolder.createEmptyContext();
+                var authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                context.setAuthentication(authToken);
+                SecurityContextHolder.setContext(context);
+            }
+        }
+        filterChain.doFilter(request, response);
     }
 
-    @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        var userDetailsWrapper = (UserDetailsWrapper) authResult.getPrincipal();
-        String token = JWTUtil.generateToken(userDetailsWrapper.getUsername());
-
-        response.addHeader("Authorization", "Bearer " + token);
-        response.getWriter().flush();
-
-        super.successfulAuthentication(request, response, chain, authResult);
-    }
 }

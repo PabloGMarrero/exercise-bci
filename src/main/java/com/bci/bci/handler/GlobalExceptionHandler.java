@@ -1,10 +1,12 @@
 package com.bci.bci.handler;
 
 import com.bci.bci.user.domain.exceptions.CreateUserException;
+import org.hibernate.graph.InvalidGraphException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -64,6 +66,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
                 .build());
         return buildResponseEntity(message, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    protected ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex)
+    {
+        var message = Collections.singletonList(ErrorResponse.builder()
+                .code(401)
+                .detail(ex.getMessage())
+                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
+                .build());
+        return buildResponseEntity(message, HttpStatus.UNAUTHORIZED);
     }
 
 

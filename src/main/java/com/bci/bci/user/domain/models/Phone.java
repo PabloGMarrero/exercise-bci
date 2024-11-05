@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -16,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import java.util.Objects;
 import java.util.UUID;
 
 @Getter
@@ -32,8 +34,8 @@ public class Phone {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID id;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_fk")
     private User user;
 
     @Version
@@ -48,4 +50,24 @@ public class Phone {
 
     @Column(name = "country_code")
     private String countryCode;
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Phone)) return false;
+
+        Phone phone = (Phone) o;
+        return Objects.equals(id, phone.id) && Objects.equals(user, phone.user) && Objects.equals(version, phone.version) && Objects.equals(number, phone.number) && Objects.equals(cityCode, phone.cityCode) && Objects.equals(countryCode, phone.countryCode);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(id);
+        result = 31 * result + Objects.hashCode(user);
+        result = 31 * result + Objects.hashCode(version);
+        result = 31 * result + Objects.hashCode(number);
+        result = 31 * result + Objects.hashCode(cityCode);
+        result = 31 * result + Objects.hashCode(countryCode);
+        return result;
+    }
 }

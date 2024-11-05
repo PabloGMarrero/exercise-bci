@@ -5,8 +5,6 @@ import com.bci.bci.user.domain.ports.out.GetUserProvider;
 import com.bci.bci.user.infrastructure.adapters.out.db.UserRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 public class H2GetUser implements GetUserProvider {
 
@@ -17,7 +15,7 @@ public class H2GetUser implements GetUserProvider {
     }
 
     @Override
-    public Optional<User> getByEmail(String email) {
-        return Optional.ofNullable(userRepository.findOneByEmail(email));
+    public User getByEmail(String email) {
+        return userRepository.findOneByEmail(email);
     }
 }

@@ -1,18 +1,19 @@
 package com.bci.bci.config.security;
 
 import com.bci.bci.user.domain.models.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
 
-public class UserDetailsWrapper implements UserDetails {
-    private final User user;
+@Builder
+@AllArgsConstructor
+public class UserWrapper implements UserDetails {
 
-    public UserDetailsWrapper(User user) {
-        this.user = user;
-    }
+    private User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -31,25 +32,21 @@ public class UserDetailsWrapper implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return user.getIsActive();
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.getIsActive();
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return user.getIsActive();
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return user.getIsActive();
-    }
-
-    public String getName(){
-        return user.getName();
+        return true;
     }
 }
