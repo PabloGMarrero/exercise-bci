@@ -55,10 +55,9 @@ public class SignupController {
             @ApiResponse(responseCode = "200", description = "Login successful.", content = {@Content(schema = @Schema(implementation = UserLoginResponse.class))}),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(schema = @Schema(implementation = ErrorMessageResponse.class)))})
     public ResponseEntity<UserLoginResponse> loginUser(
-            @Parameter(description = "JWT token User", required = true) @RequestHeader("token") String token,
             @Parameter(description = "Login user request", required = true) @Valid @RequestBody LoginUserRequest request) {
 
-        var response = loginUserPort.login(request, token);
+        var response = loginUserPort.login(request);
         return ResponseEntity.ok(response);
     }
 }

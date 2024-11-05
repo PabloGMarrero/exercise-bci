@@ -7,14 +7,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import java.time.LocalDateTime;
@@ -52,8 +53,8 @@ public class User {
     private String password;
 
     @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="user", orphanRemoval = true)
-    @OrderBy("created")
+    @OneToMany(mappedBy = "user",
+            orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<Phone> phones = new HashSet<>();
 
     @Version
@@ -62,4 +63,19 @@ public class User {
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
+
+    public Phone addPhone(Phone phone) {
+        phones.add(phone);
+        phone.setUser(this);
+        return phone;
+    }
+
+    public void removePhone(Phone phone) {
+        phones.remove(phone);
+        phone.setUser(null);
+    }
+
+    public void updateLastLogin() {
+        this.lastLogin = LocalDateTime.now();
+    }
 }

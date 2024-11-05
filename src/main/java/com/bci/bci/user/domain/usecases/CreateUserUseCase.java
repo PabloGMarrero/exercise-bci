@@ -34,7 +34,7 @@ public class CreateUserUseCase implements CreateUserPort {
             throw new CreateUserException(CreateUserException.ALREADY_EXIST);
         }
 
-        //TODO encodear pass
+
         String password = passwordEncoder.encode(request.getPassword());
         var user = createUserProvider.createUser(CreateUserRequest.builder()
                 .email(request.getEmail())

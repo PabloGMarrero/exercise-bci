@@ -8,6 +8,7 @@ import com.bci.bci.user.domain.ports.out.UpdateUserProvider;
 import com.bci.bci.user.infrastructure.adapters.in.rest.request.LoginUserRequest;
 import com.bci.bci.user.infrastructure.adapters.in.rest.response.UserLoginResponse;
 import com.bci.bci.user.infrastructure.adapters.in.rest.response.UserPhoneResponse;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,43 +20,41 @@ public class LoginUserUseCase implements LoginUserPort {
     private final GetUserProvider getUserProvider;
     private final UpdateUserProvider updateUserProvider;
     private final AuthenticationProvider authenticationProvider;
+    private final PasswordEncoder passwordEncoder;
 
-    public LoginUserUseCase(GetUserProvider getUserProvider, UpdateUserProvider updateUserProvider, AuthenticationProvider authenticationProvider) {
+    public LoginUserUseCase(GetUserProvider getUserProvider, UpdateUserProvider updateUserProvider, AuthenticationProvider authenticationProvider, PasswordEncoder passwordEncoder) {
         this.getUserProvider = getUserProvider;
         this.updateUserProvider = updateUserProvider;
         this.authenticationProvider = authenticationProvider;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public UserLoginResponse login(LoginUserRequest request, String token) {
+    public UserLoginResponse login(LoginUserRequest request) {
+            authenticationProvider.validateUser(request.getEmail(), request.getPassword());
 
-        var extractedEmail = authenticationProvider.validateUser(token);
-        var user = getUserProvider.getByEmail(request.getEmail());//.orElseThrow(()-> new SecurityException("There was a error trying to get user."));
+        var user = getUserProvider.getByEmail(request.getEmail());
+        var token = authenticationProvider.generateToken(user);
 
+        user.updateLastLogin();
 
-        var updateUser = User.builder()
-                .id(user.getId())
-                .created(user.getCreated())
-                .email(user.getEmail())
-                .isActive(user.getIsActive())
-                .name(user.getName())
-                .password(user.getPassword())
-                .phones(user.getPhones())
-                .lastLogin(LocalDateTime.now())
-                //.version()
-                .build();
-
-        updateUserProvider.update(updateUser);
+        var updatedUser = updateUserProvider.update(user);
+        //var  password = passwordEncoder.encode(request.getPassword());
 
         return UserLoginResponse.builder()
-                .name(user.getName())
-                .email(user.getEmail())
-                .password(user.getPassword())
+                .id(user.getId())
+                .name(updatedUser.getName())
+                .email(updatedUser.getEmail())
+                .password(updatedUser.getPassword())
                 .phones(user.getPhones().stream().map(phone -> UserPhoneResponse.builder()
                         .number(phone.getNumber())
                         .cityCode(phone.getCityCode())
                         .countryCode(phone.getCountryCode())
                         .build()).collect(Collectors.toSet()))
+                .created(updatedUser.getCreated())
+                .lastLogin(updatedUser.getLastLogin())
+                .isActive(updatedUser.getIsActive())
+                .token(token)
                 .build();
     }
 }

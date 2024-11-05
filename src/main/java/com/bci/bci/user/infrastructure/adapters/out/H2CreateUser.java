@@ -21,11 +21,6 @@ public class H2CreateUser implements CreateUserProvider {
 
     @Override
     public User createUser(CreateUserRequest request) {
-        var phones = request.getPhones().stream()
-                .map(phoneRequest -> Phone.builder()
-                        .countryCode(phoneRequest.getContryCode())
-                        .cityCode(phoneRequest.getCityCode())
-                        .build()).collect(Collectors.toSet());
 
         var entity = User.builder()
                 .created(LocalDateTime.now())
@@ -34,8 +29,19 @@ public class H2CreateUser implements CreateUserProvider {
                 .name(request.getName())
                 .password(request.getPassword())
                 .isActive(true)
-                .phones(phones)
                 .build();
+
+        var phones = request.getPhones().stream()
+                .map(phoneRequest -> Phone.builder()
+                        .number(phoneRequest.getNumber())
+                        .countryCode(phoneRequest.getContryCode())
+                        .cityCode(phoneRequest.getCityCode())
+                        .user(entity)
+                        .build())
+                .map(entity::addPhone)
+                .collect(Collectors.toSet());
+
+
 
         return userRepository.save(entity);
     }
