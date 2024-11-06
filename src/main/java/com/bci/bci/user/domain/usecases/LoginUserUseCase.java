@@ -1,6 +1,5 @@
 package com.bci.bci.user.domain.usecases;
 
-import com.bci.bci.user.domain.models.User;
 import com.bci.bci.user.domain.ports.in.LoginUserPort;
 import com.bci.bci.user.domain.ports.out.AuthenticationProvider;
 import com.bci.bci.user.domain.ports.out.GetUserProvider;
@@ -11,7 +10,6 @@ import com.bci.bci.user.infrastructure.adapters.in.rest.response.UserPhoneRespon
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +29,7 @@ public class LoginUserUseCase implements LoginUserPort {
 
     @Override
     public UserLoginResponse login(LoginUserRequest request) {
-            authenticationProvider.validateUser(request.getEmail(), request.getPassword());
+        authenticationProvider.validateUser(request.getEmail(), request.getPassword());
 
         var user = getUserProvider.getByEmail(request.getEmail());
         var token = authenticationProvider.generateToken(user);

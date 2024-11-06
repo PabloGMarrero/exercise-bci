@@ -1,7 +1,6 @@
 package com.bci.bci.handler;
 
 import com.bci.bci.user.domain.exceptions.CreateUserException;
-import org.hibernate.graph.InvalidGraphException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

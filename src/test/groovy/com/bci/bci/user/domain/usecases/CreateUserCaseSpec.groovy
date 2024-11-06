@@ -20,6 +20,7 @@ class CreateUserCaseSpec extends Specification {
     def "raise exception when user already exist"() {
         given:
         def request = CreateUserRequest.builder().email("test").build()
+
         when:
         getUserProvider.getByEmail(request.email) >> User.builder().id(UUID.randomUUID()).build()
 
@@ -28,5 +29,24 @@ class CreateUserCaseSpec extends Specification {
         then:
         def ex = thrown CreateUserException
         ex.message == CreateUserException.ALREADY_EXIST
+    }
+
+    def "create user when validations are ok"() {
+        given:
+        CreateUserRequest request = CreateUserRequest.builder().email("test").password("pass").build()
+        String token = "token"
+        User user = User.builder().id(UUID.randomUUID()).build()
+
+        when:
+        def response = useCase.create(request)
+
+        then:
+        1 * getUserProvider.getByEmail(request.email) >> null
+        1 * passEncoder.encode(request.password) >> request.password
+        //TODO ver como hacer para que sea un any request para que el mock devuelva el user
+        1 * createUserProvider.createUser(_) >> user
+        1 * authProvider.generateToken(user) >> token
+        response.id != null
+        response.token == token
     }
 }
