@@ -33,5 +33,10 @@ when finish it, you can verify running `gradle --version`
 ### Diagrams
 
 #### Component diagram
+For more details please go to [component folder](./docs/services/component.md)
 
 #### Sequence diagram
+[Sign-up service](./docs/services/signup_flow.md)
+
+[Login service](./docs/services/login_flow.md)
+

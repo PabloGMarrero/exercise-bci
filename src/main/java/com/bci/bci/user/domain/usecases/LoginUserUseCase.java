@@ -7,7 +7,6 @@ import com.bci.bci.user.domain.ports.out.UpdateUserProvider;
 import com.bci.bci.user.infrastructure.adapters.in.rest.request.LoginUserRequest;
 import com.bci.bci.user.infrastructure.adapters.in.rest.response.UserLoginResponse;
 import com.bci.bci.user.infrastructure.adapters.in.rest.response.UserPhoneResponse;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
@@ -18,13 +17,11 @@ public class LoginUserUseCase implements LoginUserPort {
     private final GetUserProvider getUserProvider;
     private final UpdateUserProvider updateUserProvider;
     private final AuthenticationProvider authenticationProvider;
-    private final PasswordEncoder passwordEncoder;
 
-    public LoginUserUseCase(GetUserProvider getUserProvider, UpdateUserProvider updateUserProvider, AuthenticationProvider authenticationProvider, PasswordEncoder passwordEncoder) {
+    public LoginUserUseCase(GetUserProvider getUserProvider, UpdateUserProvider updateUserProvider, AuthenticationProvider authenticationProvider) {
         this.getUserProvider = getUserProvider;
         this.updateUserProvider = updateUserProvider;
         this.authenticationProvider = authenticationProvider;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -37,7 +34,6 @@ public class LoginUserUseCase implements LoginUserPort {
         user.updateLastLogin();
 
         var updatedUser = updateUserProvider.update(user);
-        //var  password = passwordEncoder.encode(request.getPassword());
 
         return UserLoginResponse.builder()
                 .id(user.getId())

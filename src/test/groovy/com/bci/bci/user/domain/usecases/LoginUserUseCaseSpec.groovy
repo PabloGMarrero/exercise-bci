@@ -5,7 +5,6 @@ import com.bci.bci.user.domain.ports.out.AuthenticationProvider
 import com.bci.bci.user.domain.ports.out.GetUserProvider
 import com.bci.bci.user.domain.ports.out.UpdateUserProvider
 import com.bci.bci.user.infrastructure.adapters.in.rest.request.LoginUserRequest
-import org.springframework.security.crypto.password.PasswordEncoder
 import spock.lang.Specification
 
 class LoginUserUseCaseSpec extends Specification {
@@ -13,8 +12,7 @@ class LoginUserUseCaseSpec extends Specification {
     private getUserProvider = Mock(GetUserProvider);
     private updateUserProvider = Mock(UpdateUserProvider);
     private authenticationProvider = Mock(AuthenticationProvider);
-    private passwordEncoder = Mock(PasswordEncoder);
-    private useCase = new LoginUserUseCase(getUserProvider, updateUserProvider, authenticationProvider, passwordEncoder)
+    private useCase = new LoginUserUseCase(getUserProvider, updateUserProvider, authenticationProvider)
 
     def "return user when validations are ok"() {
         given:
