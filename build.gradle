@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.5.4'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'groovy'
 }
 
 group = 'com.bci'
@@ -30,8 +31,10 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation("org.mockito:mockito-junit-jupiter")
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Spock test dependencies
+	testImplementation 'org.spockframework:spock-core:2.4-M1-groovy-4.0'
 }
 
 test {
