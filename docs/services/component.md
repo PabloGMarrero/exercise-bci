@@ -1,5 +1,4 @@
 ```mermaid
-
 flowchart TB
 
     subgraph apiService[API Service]
@@ -8,7 +7,7 @@ flowchart TB
         d3[Provides sign-up and Login features]:::description
     end
     apiService:::internalContainer
-    
+
     subgraph database[Database]
         direction LR
         h6[Container: H2 Database Schema]:::type
@@ -26,8 +25,8 @@ flowchart TB
         end
         signUpController:::internalComponent
 
+
         subgraph signUpPort[Sign-up Component]
-            direction LR
             h40[Component: Service that provides sign up method]:::type
             d40[Provides functionality related to signing up]:::description
         end
@@ -35,15 +34,16 @@ flowchart TB
 
         subgraph loginPort[Login Component]
             direction LR
-            h40[Component: Service that provides login method]:::type
-            d40[Provides functionality related to login]:::description
+            h41[Component: Service that provides login method]:::type
+            d41[Provides functionality related to login]:::description
         end
         loginPort:::internalComponent
 
         subgraph securityComponent[Security Component]
             direction LR
-            h40[Component: Spring Bean]:::type
-            d40[Provides functionality related to security]:::description
+            h39[Component: Spring Bean]:::type
+            d39[Provides functionality related to security]:::description
+
         end
         securityComponent:::internalComponent
 
