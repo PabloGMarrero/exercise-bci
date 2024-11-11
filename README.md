@@ -30,6 +30,43 @@ when finish it, you can verify running `gradle --version`
 
 [Here](http://localhost:8080/api/swagger-ui.html) you can explore API
 
+#### Examples
+
+#### Sign-up
+
+```curl --request POST \
+  --url http://localhost:8080/api/sign-up \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/9.3.3' \
+  --cookie JSESSIONID=B133DDF4CC3D95E85148065973737FD4 \
+  --data '{
+	"name": "test",
+	"email": "test@undominio.algo",
+	"password": "a2asfGfdfdf4",
+	"phones": [
+		{
+			"number": 10,
+			"citycode": 1,
+			"contrycode": "code"
+		}
+	]
+}'
+```
+
+#### Login
+```
+curl --request POST \
+  --url http://localhost:8080/api/login \
+  --header 'Authorization: Bearer {JWT_TOKEN}' \
+  --header 'Content-Type: application/json' \
+  --header 'User-Agent: insomnia/9.3.3' \
+  --cookie JSESSIONID=B133DDF4CC3D95E85148065973737FD4 \
+  --data '{
+	"email": "aaaaaaa@undominio.algo",
+	"password": "a2asfGfdfdf4"
+}'
+```
+
 ### Diagrams
 
 #### Component diagram
