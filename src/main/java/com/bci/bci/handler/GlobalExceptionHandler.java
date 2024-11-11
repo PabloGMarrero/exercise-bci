@@ -59,9 +59,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<Object> handleException(Exception ex)
     {
+        String stringMessage = ex.getMessage();
+        if (ex.getCause() instanceof CreateUserException)
+        {
+            stringMessage = ex.getCause().getMessage();
+        }
+
         var message = Collections.singletonList(ErrorResponse.builder()
                 .code(404)
-                .detail(ex.getMessage())
+                .detail(stringMessage)
                 .timestamp(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME))
                 .build());
         return buildResponseEntity(message, HttpStatus.NOT_ACCEPTABLE);

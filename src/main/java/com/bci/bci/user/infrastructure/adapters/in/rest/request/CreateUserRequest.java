@@ -29,6 +29,9 @@ public class CreateUserRequest {
 
     @Schema(description = "User password")
     @NotBlank(message = "Password can not be blank.")
+    @Pattern(
+            regexp = "^(?=(.*[A-Z]){1})(?=(.*\\d){2})(?=(.*[a-z]){4,})(?=.{8,12}$).*",
+            message = "Password format is not valid.")
     private String password;
 
     @Schema(description = "User phones")
