@@ -18,9 +18,10 @@ import java.util.function.Function;
 @Component
 public class JWTUtil {
 
-    private static final Long ACCESS_TOKEN_TTL = 10000L;
+    @Value("${token.ttl:10000L}")
+    private Long ACCESS_TOKEN_TTL;
 
-    @Value("${token.signing.key:xCTM8eEKft2ZBP6p5z7dXqN4WDmLbsUHnQ3augGx9cJYkAvjrhVXUzpJQDwHkWAN8dsVR6jygf5CMBLr7YvbZ9nGxu2FhqcSa3P4mJSZBgyU7ARXEk6MjpnPrh4twQ3vam2YuDWsdCcLxqzb5VGeK9T}")
+    @Value("${token.signing.key:}")
     private String ACCESS_TOKEN;
 
     public String createToken(String email) {
@@ -58,6 +59,7 @@ public class JWTUtil {
         final String userName = extractUserName(token);
         return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
+
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }

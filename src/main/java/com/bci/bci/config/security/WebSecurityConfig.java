@@ -12,18 +12,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    //private final JWTAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService userDetailsService;
 
-   public WebSecurityConfig(//JWTAuthenticationFilter jwtAuthenticationFilter,
-                             CustomUserDetailsService userDetailsService) {
-       // this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-       this.userDetailsService = userDetailsService;
+    public WebSecurityConfig(CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -38,14 +34,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/swagger-ui.html").permitAll()
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST,"/api/login").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/login").authenticated()
                 .and()
                 .httpBasic()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-                //.and()
-                //.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
